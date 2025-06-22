@@ -110,5 +110,66 @@ const getBookById = async (req: Request, res: Response) => {
   }
 };
 
+const updateBook = async (req: Request, res: Response) => {
+  try {
+    const { bookId } = req.params;
+    const updateData = req.body;
 
-module.exports = {createBook,getBooks,getBookById };
+    const updatedBook = await Book.findByIdAndUpdate(bookId, updateData, {
+      new: true,       
+      runValidators: true 
+    }).lean();
+
+    if (!updatedBook) {
+      return res.status(404).json({
+        success: false,
+        message: 'Book not found',
+      });
+    }
+
+    const { __v, ...bookData } = updatedBook;
+
+    res.status(200).json({
+      success: true,
+      message: 'Book updated successfully',
+      data: bookData,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update book',
+      error: error.message,
+    });
+  }
+};
+
+const deleteBook = async (req: Request, res: Response) => {
+  try {
+    const { bookId } = req.params;
+
+    const deletedBook = await Book.findByIdAndDelete(bookId);
+
+    if (!deletedBook) {
+      return res.status(404).json({
+        success: false,
+        message: 'Book not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Book deleted successfully',
+      data: null,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete book',
+      error: error.message,
+    });
+  }
+};
+
+
+
+module.exports = {createBook,getBooks,getBookById,updateBook,deleteBook };
