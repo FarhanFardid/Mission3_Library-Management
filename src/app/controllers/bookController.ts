@@ -47,4 +47,39 @@ const createBook = async (req: Request, res: Response) => {
   }
 };
 
-module.exports = {createBook };
+const getBooks = async (req: Request, res: Response) => {
+  try {
+    const filterGenre = req.query.filter as string | undefined;
+    const sortBy = (req.query.sortBy as string) || 'createdAt';
+    const sortOrder = (req.query.sort as string) === 'desc' ? -1 : 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const filter: any = {};
+    if (filterGenre) {
+      filter.genre = filterGenre.toUpperCase();
+    }
+
+    
+    const books = await Book.find(filter)
+      .sort({ [sortBy]: sortOrder })
+      .limit(limit)
+      .lean();
+
+
+    const cleanBooks = books.map(({ __v, ...rest }) => rest);
+
+    res.status(200).json({
+      success: true,
+      message: 'Books retrieved successfully',
+      data: cleanBooks,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch books',
+      error: error.message,
+    });
+  }
+};
+
+module.exports = {createBook,getBooks };
