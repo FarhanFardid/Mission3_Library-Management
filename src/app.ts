@@ -7,14 +7,12 @@ dotenv.config();
 
 const app: Application = express();
 
-
-app.use(cors({ origin: true, credentials: true }));
-
+app.use(cors());
 app.use(express.json());
 
 
 app.get("/", (req:Request, res:Response) => {
-  res.send("Library Management Server is up and running...");
+  res.send("Library Management Server is Up and Running...");
 });
 
 app.use('/api/books', bookRoutes); 

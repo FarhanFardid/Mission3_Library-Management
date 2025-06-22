@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import { Book } from '../models/bookModel';
 
 // Create a new book
-export const createBook = async (req: Request, res: Response) => {
+
+const createBook = async (req: Request, res: Response) => {
   try {
     const { title, author, genre, isbn, description, copies, available } = req.body;
     if (!title || !author || !genre || !isbn || copies === undefined) {
@@ -46,4 +47,4 @@ export const createBook = async (req: Request, res: Response) => {
   }
 };
 
-// module.exports = {createBook };
+module.exports = {createBook };

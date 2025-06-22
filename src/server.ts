@@ -1,15 +1,17 @@
 import mongoose from "mongoose";
 import app from "./app";
+import { Server } from "http";
 
-const PORT = process.env.PORT || 3000;
+let server:Server;
+const PORT = 3000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/test";
 
-const startServer = async () => {
+async function startServer() {
   try {
     await mongoose.connect(MONGO_URI);
     console.log("Connected to MongoDB successfully");
 
-    app.listen(PORT, () => {
+    server = app.listen(PORT, () => {
       console.log(`Library Management Server is up and running on port ${PORT}`);
     });
   } catch (error) {
