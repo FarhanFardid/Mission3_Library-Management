@@ -32,11 +32,11 @@ const createBook = async (req: Request, res: Response) => {
     });
 
     const savedBook = await newBook.save();
-
+    const { __v, ...bookData } = savedBook.toObject();
     res.status(201).json({
       success: true,
       message: 'Book created successfully',
-      data: savedBook,
+      data: bookData,
     });
   } catch (error: any) {
     res.status(500).json({
