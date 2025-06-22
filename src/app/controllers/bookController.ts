@@ -59,7 +59,6 @@ const getBooks = async (req: Request, res: Response) => {
       filter.genre = filterGenre.toUpperCase();
     }
 
-    
     const books = await Book.find(filter)
       .sort({ [sortBy]: sortOrder })
       .limit(limit)
@@ -82,4 +81,34 @@ const getBooks = async (req: Request, res: Response) => {
   }
 };
 
-module.exports = {createBook,getBooks };
+const getBookById = async (req: Request, res: Response) => {
+  try {
+    const { bookId } = req.params;
+
+    const book = await Book.findById(bookId).lean();
+
+    if (!book) {
+      return res.status(404).json({
+        success: false,
+        message: 'Book not found',
+      });
+    }
+
+    const { __v, ...bookData } = book;
+
+    res.status(200).json({
+      success: true,
+      message: 'Book retrieved successfully',
+      data: bookData,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch book',
+      error: error.message,
+    });
+  }
+};
+
+
+module.exports = {createBook,getBooks,getBookById };

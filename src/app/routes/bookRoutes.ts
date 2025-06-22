@@ -1,9 +1,10 @@
 import express from 'express';
-const { createBook, getBooks } = require('../controllers/bookController');
+const { createBook, getBooks,getBookById } = require('../controllers/bookController');
 
 const router = express.Router();
 
 router.post('/', createBook);
 router.get('/', getBooks);
+router.get('/:bookId', getBookById); 
 
 export default router;
