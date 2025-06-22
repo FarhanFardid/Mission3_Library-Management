@@ -32,7 +32,6 @@ const borrowBook = async (req: Request, res: Response) => {
  
     await Book.updateCopiesAfterBorrow(book, quantity);
 
-    // Create borrow record
     const borrowRecord = await Borrow.create({
       book,
       quantity,
@@ -55,4 +54,54 @@ const borrowBook = async (req: Request, res: Response) => {
   }
 };
 
-module.exports=  { borrowBook };
+const getBorrowSummary = async (req: Request, res: Response) => {
+  try {
+    const summary = await Borrow.aggregate([
+      {
+        $group: {
+          _id: '$book',
+          totalQuantity: { $sum: '$quantity' },
+        },
+      },
+      {
+        $lookup: {
+          from: 'books',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'bookDetails',
+        },
+      },
+      {
+        $unwind: '$bookDetails',
+      },
+      {
+        $project: {
+          _id: 0,
+          book: {
+            title: '$bookDetails.title',
+            isbn: '$bookDetails.isbn',
+          },
+          totalQuantity: 1,
+        },
+      },
+    ]);
+
+        const formattedSummary = summary.map((item) => ({
+      book: item.book,
+      totalQuantity: item.totalQuantity,
+    }));
+
+    res.status(200).json({
+      success: true,
+      message: 'Borrowed books summary retrieved successfully',
+      data: formattedSummary,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve borrow summary',
+      error: error.message,
+    });
+  }
+};
+module.exports=  { borrowBook,getBorrowSummary };

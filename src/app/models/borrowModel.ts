@@ -27,4 +27,13 @@ const borrowSchema = new Schema<IBorrow>(
   }
 );
 
+borrowSchema.pre('save', function (next) {
+  console.log(` Borrow record is being saved: Book=${this.book}, Quantity=${this.quantity}`);
+  next();
+});
+
+borrowSchema.post('save', function (doc) {
+  console.log(`Borrow record saved with ID: ${doc._id}`);
+});
+
 export const Borrow = model<IBorrow>('Borrow', borrowSchema);
