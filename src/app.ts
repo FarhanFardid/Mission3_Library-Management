@@ -8,7 +8,9 @@ dotenv.config();
 
 const app: Application = express();
 
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:5173', 'https://minimal-library-farhanfardids-projects.vercel.app']
+   }));
 app.use(express.json());
 
 

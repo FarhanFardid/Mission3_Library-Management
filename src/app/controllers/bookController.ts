@@ -51,8 +51,8 @@ const getBooks = async (req: Request, res: Response) => {
   try {
     const filterGenre = req.query.filter as string | undefined;
     const sortBy = (req.query.sortBy as string) || 'createdAt';
-    const sortOrder = (req.query.sort as string) === 'desc' ? -1 : 1;
-    const limit = parseInt(req.query.limit as string) || 10;
+    const sortOrder = (req.query.sort as string) === 'asc' ? 1 : -1;
+    const limit = parseInt(req.query.limit as string) || 10000;
 
     const filter: any = {};
     if (filterGenre) {
